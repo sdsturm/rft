@@ -51,8 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# CMake generated
+config.h
+
 # Build directories
 *[Bb][Uu][Ii][Ll][Dd]*/*
 
 # IDE and editors
 .vscode/*
+CMakeLists.txt.user

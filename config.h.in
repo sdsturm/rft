@@ -1,0 +1,7 @@
+#ifndef RFT_CONFIG_H
+#define RFT_CONFIG_H
+
+#define RFT_VERSION_MAJOR @rft_VERSION_MAJOR@
+#define RFT_VERSION_MINOR @rft_VERSION_MINOR@
+
+#endif /*  RFT_CONFIG_H*/
