@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Build directories
+*[Bb][Uu][Ii][Ll][Dd]*/*
+
+# IDE and editors
+.vscode/*
