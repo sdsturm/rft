@@ -1,5 +1,5 @@
-#include "config.h"
-#include "touchstone.h"
+#include "../config.h"
+#include "../touchstone.h"
 
 #include <stdio.h>
 #include <stdlib.h>

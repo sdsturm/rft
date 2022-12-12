@@ -14,17 +14,10 @@ add_library(${PROJECT_NAME} STATIC
     )
 target_link_libraries(${PROJECT_NAME} PRIVATE -lm)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+add_subdirectory(tests)
 
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
 
 add_executable(rftools main.c)
 target_link_libraries(rftools PRIVATE rft)
 target_compile_options(rftools PRIVATE -Wall -Wextra -pedantic)
-
-
-
-
-
-
-add_executable(test test.c)
-target_link_libraries(test PRIVATE rft)
