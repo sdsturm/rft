@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* ========================================================================== */
+/*                      Local to this translation unit                        */
+/* ========================================================================== */
+
 #define LINE_BUFF_LENGTH 255
 
 int
@@ -216,6 +220,10 @@ parse_data_block_snp(const char* line,
   /* TODO */
 }
 
+/* ========================================================================== */
+/*                          Declared in header file                           */
+/* ========================================================================== */
+
 void
 parse_touchstone(const char* filename,
                  int* n_ports,
@@ -232,12 +240,10 @@ parse_touchstone(const char* filename,
   int options_line_found = 0;
   double freq_factor = 1.0;
   enum complex_format format;
-  void (*fun_ptr)(const char* line,
-                  const int n_params,
-                  const enum complex_format format,
-                  int* n_freq,
-                  double** freq,
-                  rft_complex** data);
+  int n_read;
+  double f;    /* Frequency for sscanf */
+  double a[8]; /* 1st number of complex format for sscanf */
+  double b[8]; /* 2nd number of complex format for sscanf */
 
   /* Counter for frequency sampling points */
   *n_freq = 0;
@@ -246,31 +252,12 @@ parse_touchstone(const char* filename,
   *n_ports = get_n_ports(filename);
   n_params = (*n_ports) * (*n_ports);
 
-  /* Assign parser function */
-  switch (*n_ports) {
-    case 1:
-      fun_ptr = parse_data_block_s1p;
-      break;
-    case 2:
-      fun_ptr = parse_data_block_s2p;
-      break;
-    case 3:
-      fun_ptr = parse_data_block_s3p;
-      break;
-    case 4:
-      fun_ptr = parse_data_block_s4p;
-      break;
-    default:
-      fun_ptr = parse_data_block_snp;
-      break;
-  }
-
   /* Open file for reading */
   if (!(fp = fopen(filename, "r"))) {
     fprintf(stderr, "Could not open file %s for reading.\n", filename);
   }
 
-  /* Parse comments and metainformation */
+  /* Parse metainformation and count number of frequency sampling points */
   while (fgets(line_buff, LINE_BUFF_LENGTH, fp)) {
     /* Ignore line and tailing comments */
     if (NULL != (comment_char = strchr(line_buff, '!'))) {
@@ -289,8 +276,78 @@ parse_touchstone(const char* filename,
       continue;
     }
 
-    /* Parse data */
-    (*fun_ptr)(line_buff, n_params, format, n_freq, freq, data);
+    /* Count data lines */
+    n_read = sscanf(line_buff,
+                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
+                    "%lf %lf %lf %lf %lf %lf %lf\n",
+                    &f,
+                    &a[0],
+                    &b[0],
+                    &a[1],
+                    &b[1],
+                    &a[2],
+                    &b[2],
+                    &a[3],
+                    &b[3],
+                    &a[4],
+                    &b[4],
+                    &a[5],
+                    &b[5],
+                    &a[6],
+                    &b[6],
+                    &a[7],
+                    &b[7]);
+    if (5 != n_read) { /* Only noise parameters contain five entries per line */
+      (*n_freq)++;
+    } else {
+      break;
+      ;
+    }
+  }
+  fclose(fp);
+
+  /* Allocate memory */
+  *freq = realloc(*freq, (*n_freq) * sizeof((*freq)[0]));
+  *data = realloc(*data, (*n_freq) * n_params * sizeof((*data)[0]));
+
+  /* Parse acutal data */
+  fp = fopen(filename, "r");
+  while (fgets(line_buff, LINE_BUFF_LENGTH, fp)) {
+    /* Ignore line and tailing comments */
+    if (NULL != (comment_char = strchr(line_buff, '!'))) {
+      line_buff[comment_char - line_buff] = '\0';
+    }
+
+    /* Ignore empty lines */
+    if (0 == strlen(line_buff)) {
+      continue;
+    }
+
+    /* Parse data line */
+    n_read = sscanf(line_buff,
+                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
+                    "%lf %lf %lf %lf %lf %lf %lf\n",
+                    &f,
+                    &a[0],
+                    &b[0],
+                    &a[1],
+                    &b[1],
+                    &a[2],
+                    &b[2],
+                    &a[3],
+                    &b[3],
+                    &a[4],
+                    &b[4],
+                    &a[5],
+                    &b[5],
+                    &a[6],
+                    &b[6],
+                    &a[7],
+                    &b[7]);
+    if (5 == n_read) { /* Only noise parameters contain five entries per line */
+      break;
+    }
+    /* TODO: assemble data into arrays */
   }
 
   fclose(fp);
