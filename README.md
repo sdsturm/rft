@@ -1,2 +1,1 @@
-# rft
-RF engineering tools in ANSI C
+# RF engineering tools in ANSI C
