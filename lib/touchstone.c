@@ -100,21 +100,21 @@ parse_options_line(char* line,
   }
 }
 
-rft_complex
+cmplx
 unformat_complex(const double a,
                  const double b,
                  const enum complex_format format)
 {
-  rft_complex ret;
+  cmplx ret;
   switch (format) {
     case DB:
-      ret = rft_complex_mag_arg(pow(10.0, a / 20.0), deg2rad(b));
+      ret = cmplx_mag_arg(pow(10.0, a / 20.0), deg2rad(b));
       break;
     case MA:
-      ret = rft_complex_mag_arg(a, deg2rad(b));
+      ret = cmplx_mag_arg(a, deg2rad(b));
       break;
     case RI:
-      ret = rft_complex_real_imag(a, b);
+      ret = cmplx_real_imag(a, b);
       break;
   }
   return ret;
@@ -126,9 +126,9 @@ parse_data_block_s1p(const char* line,
                      const enum complex_format format,
                      int* n_freq,
                      double** freq,
-                     rft_complex** data)
+                     cmplx** data)
 {
-  rft_complex s11;
+  cmplx s11;
   double f, a, b;
   int index;
 
@@ -153,7 +153,7 @@ parse_data_block_s2p(const char* line,
                      const enum complex_format format,
                      int* n_freq,
                      double** freq,
-                     rft_complex** data)
+                     cmplx** data)
 {
   int i, index;
   double f;
@@ -193,7 +193,7 @@ parse_data_block_s3p(const char* line,
                      const enum complex_format format,
                      int* n_freq,
                      double** freq,
-                     rft_complex** data)
+                     cmplx** data)
 {
   /* TODO */
 }
@@ -204,7 +204,7 @@ parse_data_block_s4p(const char* line,
                      const enum complex_format format,
                      int* n_freq,
                      double** freq,
-                     rft_complex** data)
+                     cmplx** data)
 {
   /* TODO */
 }
@@ -215,7 +215,7 @@ parse_data_block_snp(const char* line,
                      const enum complex_format format,
                      int* n_freq,
                      double** freq,
-                     rft_complex** data)
+                     cmplx** data)
 {
   /* TODO */
 }
@@ -230,7 +230,7 @@ parse_touchstone(const char* filename,
                  int* n_freq,
                  double* r_ref,
                  double** freq,
-                 rft_complex** data)
+                 cmplx** data)
 {
   int n_params;
   FILE* fp;

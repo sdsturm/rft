@@ -1,7 +1,7 @@
 project(rft C)
 
 add_library(${PROJECT_NAME} STATIC
-    rft_complex.c
+    cmplx.c
     utils.c
     touchstone.c
     sparameters.c

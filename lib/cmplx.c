@@ -1,35 +1,35 @@
-#include "rft_complex.h"
+#include "cmplx.h"
 
 #include <math.h>
 
-rft_complex
-rft_complex_real_imag(const double real, const double imag)
+cmplx
+cmplx_real_imag(const double real, const double imag)
 {
-  rft_complex ans;
+  cmplx ans;
   ans.a = real;
   ans.b = imag;
   return ans;
 }
 
-rft_complex
-rft_complex_mag_arg(const double mag, const double arg)
+cmplx
+cmplx_mag_arg(const double mag, const double arg)
 {
-  rft_complex ans;
+  cmplx ans;
   ans.a = mag * cos(arg);
   ans.b = mag * sin(arg);
   return ans;
 }
 
-rft_complex
-rft_complex_imag_unit()
+cmplx
+cmplx_imag_unit()
 {
-  rft_complex ans;
+  cmplx ans;
   ans.a = 0.0;
   ans.b = 1.0;
   return ans;
 }
 
-double rft_complex_abs (const rft_complex z)
+double cmplx_abs (const cmplx z)
 {
   double tmp;
   double ans;
@@ -44,30 +44,30 @@ double rft_complex_abs (const rft_complex z)
   return ans;
 }
 
-double rft_complex_arg (const rft_complex z)
+double cmplx_arg (const cmplx z)
 {
   return atan2(z.b, z.a);
 }
 
-rft_complex rft_complex_add (const rft_complex z1, const rft_complex z2)
+cmplx cmplx_add (const cmplx z1, const cmplx z2)
 {
-  rft_complex ans;
+  cmplx ans;
   ans.a = z1.a + z2.a;
   ans.b = z1.b + z2.b;
   return ans;
 }
 
-rft_complex rft_complex_sub (const rft_complex z1, const rft_complex z2)
+cmplx cmplx_sub (const cmplx z1, const cmplx z2)
 {
-  rft_complex ans;
+  cmplx ans;
   ans.a = z1.a - z2.a;
   ans.b = z1.b - z2.b;
   return ans;
 }
 
-rft_complex rft_complex_mul (const rft_complex z1, const rft_complex z2)
+cmplx cmplx_mul (const cmplx z1, const cmplx z2)
 {
-  rft_complex ans;
+  cmplx ans;
   double ac = z1.a * z2.a;
   double bd = z1.b * z2.b;
   ans.a = ac -bd;
@@ -75,9 +75,9 @@ rft_complex rft_complex_mul (const rft_complex z1, const rft_complex z2)
   return ans;
 }
 
-rft_complex rft_complex_div (const rft_complex z1, const rft_complex z2)
+cmplx cmplx_div (const cmplx z1, const cmplx z2)
 {
-  rft_complex ans;
+  cmplx ans;
   double den, common;
   if (fabs(z2.a) >= fabs(z2.b)) {
     common = z2.b / z2.a;
@@ -95,11 +95,11 @@ rft_complex rft_complex_div (const rft_complex z1, const rft_complex z2)
   return ans;
 }
 
-rft_complex rft_complex_sqrt (const rft_complex z)
+cmplx cmplx_sqrt (const cmplx z)
 {
   double w;
   double tmp;
-  rft_complex ans;
+  cmplx ans;
 
   if ((0.0 == z.a) && (z.a == z.b)) {
     w = 0.0;
@@ -128,9 +128,9 @@ rft_complex rft_complex_sqrt (const rft_complex z)
   return ans;
 }
 
-rft_complex rft_complex_exp (const rft_complex z)
+cmplx cmplx_exp (const cmplx z)
 {
-  rft_complex ans;
+  cmplx ans;
   double factor = exp(z.a);
   ans.a = factor * cos(z.b);
   ans.b = factor * sin(z.b);

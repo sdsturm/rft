@@ -1,7 +1,7 @@
 #ifndef RFT_SPARAMETERS_H
 #define RFT_SPARAMETERS_H
 
-#include "rft_complex.h"
+#include "cmplx.h"
 
 struct sparameters
 {
@@ -9,7 +9,7 @@ struct sparameters
   int n_freq;
   double* z_ref;
   double* freq;
-  rft_complex* data;
+  cmplx* data;
 };
 
 #endif /* RFT_SPARAMETERS_H */

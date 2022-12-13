@@ -13,7 +13,7 @@ main(int argc, char const* argv[])
   int n_freq;
   double r_ref;
   double* freq;
-  rft_complex* data;
+  cmplx* data;
 
   parse_touchstone(filename, &n_ports, &n_freq, &r_ref, &freq, &data);
 
