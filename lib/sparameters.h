@@ -3,6 +3,10 @@
 
 #include "cmplx.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif 
+
 struct sparameters
 {
   int n_ports;
@@ -11,5 +15,9 @@ struct sparameters
   double* freq;
   cmplx* data;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* RFT_SPARAMETERS_H */

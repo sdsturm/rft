@@ -15,5 +15,5 @@ endif()
 
 
 
-add_executable(test test.c)
-target_link_libraries(test PRIVATE rft)
+add_executable(some_test some_test.c)
+target_link_libraries(some_test PRIVATE rft)

@@ -54,7 +54,7 @@ parse_options_line(char* line,
 
   /* Convert line to lowercase */
   for (i = 0; i < strlen(line); ++i) {
-    line[i] = (char) tolower(line[i]);
+    line[i] = (char)tolower(line[i]);
   }
 
   /* Parse line */
@@ -84,7 +84,7 @@ parse_options_line(char* line,
     fprintf(stderr, "Invalid network parameter type detected.\n");
     exit(EXIT_FAILURE);
   } else {
-    *type = (char) toupper(*type);
+    *type = (char)toupper(*type);
   }
 
   /* Complex number format */
@@ -120,106 +120,6 @@ unformat_complex(const double a,
   return ret;
 }
 
-void
-parse_data_block_s1p(const char* line,
-                     const int n_params,
-                     const enum complex_format format,
-                     int* n_freq,
-                     double** freq,
-                     cmplx** data)
-{
-  cmplx s11;
-  double f, a, b;
-  int index;
-
-  /* Parse line */
-  if (3 != sscanf(line, "%lf %lf %lf\n", &f, &a, &b)) {
-    return;
-  }
-
-  /* Process data */
-  ++(*n_freq);
-  *freq = realloc(*freq, *n_freq * sizeof(*freq[0]));
-  index = *n_freq - 1;
-  (*freq)[index] = f;
-  *data = realloc(*data, n_params * sizeof(*data[0]));
-  s11 = unformat_complex(a, b, format);
-  (*data)[index] = s11;
-}
-
-void
-parse_data_block_s2p(const char* line,
-                     const int n_params,
-                     const enum complex_format format,
-                     int* n_freq,
-                     double** freq,
-                     cmplx** data)
-{
-  int i, index;
-  double f;
-  double a[4];
-  double b[4];
-
-  /* Parse line */
-  if (9 != sscanf(line,
-                  "%lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                  &f,
-                  &a[0],
-                  &b[0],
-                  &a[1],
-                  &b[1],
-                  &a[2],
-                  &b[2],
-                  &a[3],
-                  &b[3])) {
-    return;
-  }
-
-  /* Process data */
-  ++(*n_freq);
-  *freq = realloc(*freq, *n_freq * sizeof(*freq[0]));
-  index = *n_freq - 1;
-  (*freq)[index] = f;
-  *data = realloc(*data, n_params * sizeof(*data[0]));
-  index *= n_params;
-  for (i = 0; i < 4; ++i) {
-    (*data)[index + i] = unformat_complex(a[i], b[i], format);
-  }
-}
-
-void
-parse_data_block_s3p(const char* line,
-                     const int n_params,
-                     const enum complex_format format,
-                     int* n_freq,
-                     double** freq,
-                     cmplx** data)
-{
-  /* TODO */
-}
-
-void
-parse_data_block_s4p(const char* line,
-                     const int n_params,
-                     const enum complex_format format,
-                     int* n_freq,
-                     double** freq,
-                     cmplx** data)
-{
-  /* TODO */
-}
-
-void
-parse_data_block_snp(const char* line,
-                     const int n_params,
-                     const enum complex_format format,
-                     int* n_freq,
-                     double** freq,
-                     cmplx** data)
-{
-  /* TODO */
-}
-
 /* ========================================================================== */
 /*                          Declared in header file                           */
 /* ========================================================================== */
@@ -244,6 +144,7 @@ parse_touchstone(const char* filename,
   double f;    /* Frequency for sscanf */
   double a[8]; /* 1st number of complex format for sscanf */
   double b[8]; /* 2nd number of complex format for sscanf */
+  int n_nums_freq_line;
 
   /* Counter for frequency sampling points */
   *n_freq = 0;
@@ -251,6 +152,25 @@ parse_touchstone(const char* filename,
   /* Get number of ports */
   *n_ports = get_n_ports(filename);
   n_params = (*n_ports) * (*n_ports);
+
+  /* Number of floating point numbers in lines of data block */
+  switch (*n_ports) {
+    case 1:
+      n_nums_freq_line = 3; /* 1 + 1 * 2 */
+      break;
+    case 2:
+      n_nums_freq_line = 9; /* 1 + 4 * 2 */
+      break;
+    case 3:
+      n_nums_freq_line = 7; /* 1 + 3 * 2 */
+      break;
+    case 4:
+      n_nums_freq_line = 9; /* 1 + 4 * 2 */
+      break;
+    default:
+      n_nums_freq_line = 9; /* 1 + 4 * 2 */
+      break;
+  }
 
   /* Open file for reading */
   if (!(fp = fopen(filename, "r"))) {
@@ -277,30 +197,31 @@ parse_touchstone(const char* filename,
     }
 
     /* Count data lines */
-    n_read = sscanf(line_buff,
-                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                    &f,
-                    &a[0],
-                    &b[0],
-                    &a[1],
-                    &b[1],
-                    &a[2],
-                    &b[2],
-                    &a[3],
-                    &b[3],
-                    &a[4],
-                    &b[4],
-                    &a[5],
-                    &b[5],
-                    &a[6],
-                    &b[6],
-                    &a[7],
-                    &b[7]);
-    if (5 != n_read) { /* Only noise parameters contain five entries per line */
+    n_read = sscanf(
+      line_buff,
+      "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+      &f,
+      &a[0],
+      &b[0],
+      &a[1],
+      &b[1],
+      &a[2],
+      &b[2],
+      &a[3],
+      &b[3],
+      &a[4],
+      &b[4],
+      &a[5],
+      &b[5],
+      &a[6],
+      &b[6],
+      &a[7],
+      &b[7]);
+    if (n_read == n_nums_freq_line) {
       (*n_freq)++;
-    } else {
+    } else if (5 == n_read) {
+      /* Only noise parameters contain five entries per line */
       break;
-      ;
     }
   }
   fclose(fp);
@@ -323,25 +244,26 @@ parse_touchstone(const char* filename,
     }
 
     /* Parse data line */
-    n_read = sscanf(line_buff,
-                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                    &f,
-                    &a[0],
-                    &b[0],
-                    &a[1],
-                    &b[1],
-                    &a[2],
-                    &b[2],
-                    &a[3],
-                    &b[3],
-                    &a[4],
-                    &b[4],
-                    &a[5],
-                    &b[5],
-                    &a[6],
-                    &b[6],
-                    &a[7],
-                    &b[7]);
+    n_read = sscanf(
+      line_buff,
+      "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+      &f,
+      &a[0],
+      &b[0],
+      &a[1],
+      &b[1],
+      &a[2],
+      &b[2],
+      &a[3],
+      &b[3],
+      &a[4],
+      &b[4],
+      &a[5],
+      &b[5],
+      &a[6],
+      &b[6],
+      &a[7],
+      &b[7]);
     if (5 == n_read) { /* Only noise parameters contain five entries per line */
       break;
     }
