@@ -108,10 +108,10 @@ unformat_complex(const double a,
   cmplx ret;
   switch (format) {
     case DB:
-      ret = cmplx_mag_arg(pow(10.0, a / 20.0), deg2rad(b));
+      ret = cmplx_abs_ang(pow(10.0, a / 20.0), deg2rad(b));
       break;
     case MA:
-      ret = cmplx_mag_arg(a, deg2rad(b));
+      ret = cmplx_abs_ang(a, deg2rad(b));
       break;
     case RI:
       ret = cmplx_real_imag(a, b);

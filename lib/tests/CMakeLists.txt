@@ -1,6 +1,17 @@
-project(tests LANGUAGES C)
+if(RFT_BUILD_TESTS)
 
-# TODO: unit tests
+project(tests LANGUAGES CXX)
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+enable_testing()
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+    test_cmplx.cpp
+    test_touchstone.cpp
+    )
+target_link_libraries(${PROJECT_NAME} PRIVATE rft Boost::unit_test_framework)
+
+endif()
 
 
 

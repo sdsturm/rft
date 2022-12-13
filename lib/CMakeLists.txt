@@ -1,6 +1,6 @@
-project(rft C)
+project(rft C CXX)
 
-add_library(${PROJECT_NAME} STATIC
+add_library(${PROJECT_NAME} SHARED
     cmplx.c
     utils.c
     touchstone.c

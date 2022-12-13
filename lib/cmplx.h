@@ -1,6 +1,10 @@
 #ifndef RFT_CMPLX_H
 #define RFT_CMPLX_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 typedef struct
 {
   double a;
@@ -9,7 +13,7 @@ typedef struct
 
 cmplx cmplx_real_imag(const double real, const double imag);
 
-cmplx cmplx_mag_arg(const double mag, const double arg);
+cmplx cmplx_abs_ang(const double mag, const double arg);
 
 cmplx cmplx_imag_unit();
 
@@ -28,5 +32,9 @@ cmplx cmplx_div (const cmplx z1, const cmplx z2);
 cmplx cmplx_sqrt (const cmplx z);
 
 cmplx cmplx_exp (const cmplx z);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* RFT_CMPLX_H */

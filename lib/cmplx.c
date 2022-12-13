@@ -12,7 +12,7 @@ cmplx_real_imag(const double real, const double imag)
 }
 
 cmplx
-cmplx_mag_arg(const double mag, const double arg)
+cmplx_abs_ang(const double mag, const double arg)
 {
   cmplx ans;
   ans.a = mag * cos(arg);
