@@ -25,4 +25,8 @@ rft_complex rft_complex_mul (const rft_complex z1, const rft_complex z2);
 
 rft_complex rft_complex_div (const rft_complex z1, const rft_complex z2);
 
+rft_complex rft_complex_sqrt (const rft_complex z);
+
+rft_complex rft_complex_exp (const rft_complex z);
+
 #endif /* RFT_RFT_COMPLEX_H */
