@@ -278,8 +278,7 @@ parse_touchstone(const char* filename,
 
     /* Count data lines */
     n_read = sscanf(line_buff,
-                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
-                    "%lf %lf %lf %lf %lf %lf %lf\n",
+                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                     &f,
                     &a[0],
                     &b[0],
@@ -325,8 +324,7 @@ parse_touchstone(const char* filename,
 
     /* Parse data line */
     n_read = sscanf(line_buff,
-                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
-                    "%lf %lf %lf %lf %lf %lf %lf\n",
+                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                     &f,
                     &a[0],
                     &b[0],

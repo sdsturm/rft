@@ -1,5 +1,6 @@
 #include "crop.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 void
