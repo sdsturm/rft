@@ -1,4 +1,3 @@
-#include "../config.h"
 #include "../touchstone.h"
 
 #include <stdio.h>
