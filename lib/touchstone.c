@@ -54,7 +54,7 @@ parse_options_line(char* line,
 
   /* Convert line to lowercase */
   for (i = 0; i < strlen(line); ++i) {
-    line[i] = tolower(line[i]);
+    line[i] = (char) tolower(line[i]);
   }
 
   /* Parse line */
@@ -84,7 +84,7 @@ parse_options_line(char* line,
     fprintf(stderr, "Invalid network parameter type detected.\n");
     exit(EXIT_FAILURE);
   } else {
-    *type = toupper(*type);
+    *type = (char) toupper(*type);
   }
 
   /* Complex number format */
