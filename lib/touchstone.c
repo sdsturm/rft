@@ -42,15 +42,14 @@ parse_options_line(char* line,
                    char* type,
                    enum complex_format* format)
 {
-  int n_read;
-  unsigned int i;
-  char unit[3];
-  char format_str[2];
+  int i;
+  char* token;
 
   /* Defaults */
   *freq_factor = 1.0e9; /* GHz */
-  *r_ref = 50.0;        /* Ohm */
+  *type = 'S';          /* S-parameters */
   *format = MA;         /* Magnitude and phase in degrees */
+  *r_ref = 50.0;        /* Ohm */
 
   /* Convert line to lowercase */
   for (i = 0; i < strlen(line); ++i) {
@@ -58,45 +57,42 @@ parse_options_line(char* line,
   }
 
   /* Parse line */
-  n_read = sscanf(line, "# %s %s %s r %lf\n", unit, type, format_str, r_ref);
-  if (4 != n_read) {
-    fprintf(stderr, "Error reading options line.\n");
-    exit(EXIT_FAILURE);
-  }
+  token = strtok(line, " "); /* First token is '#' */
+  while (token != NULL) {
+    token = strtok(NULL, " ");
 
-  /* Frequency unit */
-  if (0 == strcmp(unit + 1, "hz")) {
-    *freq_factor = 1.0;
-  } else if (0 == strcmp(unit, "khz")) {
-    *freq_factor = 1.0e3;
-  } else if (0 == strcmp(unit, "mhz")) {
-    *freq_factor = 1.0e6;
-  } else if (0 == strcmp(unit, "ghz")) {
-    *freq_factor = 1.0e9;
-  } else {
-    fprintf(stderr, "Invalid frequency unit %s read from options line. ", unit);
-    fprintf(stderr, "Using default.\n");
-  }
+    /* Frequency unit */
+    if (0 == strcmp(token, "hz")) {
+      *freq_factor = 1.0;
+    } else if (0 == strcmp(token, "khz")) {
+      *freq_factor = 1.0e3;
+    } else if (0 == strcmp(token, "mhz")) {
+      *freq_factor = 1.0e6;
+    } else if (0 == strcmp(token, "ghz")) {
+      *freq_factor = 1.0e9;
+    }
 
-  /* Parameter type */
-  if ('s' == *type || 'y' == *type || 'z' == *type || 'h' == *type ||
-      'g' == *type) {
-    fprintf(stderr, "Invalid network parameter type detected.\n");
-    exit(EXIT_FAILURE);
-  } else {
-    *type = (char)toupper(*type);
-  }
+    /* Parameter type */
+    if (0 == strcmp(token, "s") || 0 == strcmp(token, "y") ||
+        0 == strcmp(token, "z") || 0 == strcmp(token, "h") ||
+        0 == strcmp(token, "g")) {
+      *type = (char)toupper(token[0]);
+    }
 
-  /* Complex number format */
-  if (0 == strcmp(format_str, "db")) {
-    *format = DB;
-  } else if (0 == strcmp(format_str, "ma")) {
-    *format = MA;
-  } else if (0 == strcmp(format_str, "ri")) {
-    *format = RI;
-  } else {
-    fprintf(stderr, "Invalid complex number format %s detected.\n", format_str);
-    exit(EXIT_FAILURE);
+    /* Complex number format */
+    if (0 == strcmp(token, "db")) {
+      *format = DB;
+    } else if (0 == strcmp(token, "ma")) {
+      *format = MA;
+    } else if (0 == strcmp(token, "ri")) {
+      *format = RI;
+    }
+
+    /* Reference impedance */
+    if (0 == strcmp(token, "r")) {
+      token = strtok(NULL, " ");
+      *r_ref = atof(token);
+    }
   }
 }
 
