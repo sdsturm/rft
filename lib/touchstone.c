@@ -193,6 +193,7 @@ parse_touchstone(const char* filename,
     }
 
     /* Count data lines */
+    /* TODO: use strtok instead and count tokens */
     n_read = sscanf(
       line_buff,
       "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
@@ -240,6 +241,7 @@ parse_touchstone(const char* filename,
     }
 
     /* Parse data line */
+    /* TODO: use strtok instead */
     n_read = sscanf(
       line_buff,
       "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
