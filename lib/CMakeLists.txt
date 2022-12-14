@@ -4,7 +4,7 @@ add_library(${PROJECT_NAME} SHARED
     cmplx.c
     utils.c
     touchstone.c
-    sparameters.c
+    sparams.c
     )
     
 target_link_libraries(${PROJECT_NAME} PRIVATE -lm)
