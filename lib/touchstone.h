@@ -1,11 +1,13 @@
 #ifndef RFT_TOUCHSTONE_H
 #define RFT_TOUCHSTONE_H
 
+#include "cmplx.h"
+
+#include <stdlib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
-
-#include "cmplx.h"
 
 void
 parse_touchstone(const char* filename,

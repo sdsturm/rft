@@ -23,7 +23,7 @@ get_n_ports(const char* filename)
 
   ext = strstr(filename, ".s");
   strncpy(n_ports_str, ext + 2, strlen(ext) - 3);
-  n_ports = atoi(n_ports_str);
+  n_ports = (int) atol(n_ports_str);
 
   return n_ports;
 }
@@ -52,7 +52,7 @@ parse_options_line(char* line,
   *r_ref = 50.0;        /* Ohm */
 
   /* Convert line to lowercase */
-  for (i = 0; i < strlen(line); ++i) {
+  for (i = 0; i < (int) strlen(line); ++i) {
     line[i] = (char)tolower(line[i]);
   }
 
@@ -141,15 +141,17 @@ parse_touchstone(const char* filename,
   double a[8]; /* 1st number of complex format for sscanf */
   double b[8]; /* 2nd number of complex format for sscanf */
   int n_nums_freq_line;
+  char *token;
+  int i;
 
-  /* Counter for frequency sampling points */
+  /* Counter for frequency sampling posize_ts */
   *n_freq = 0;
 
   /* Get number of ports */
   *n_ports = get_n_ports(filename);
   n_params = (*n_ports) * (*n_ports);
 
-  /* Number of floating point numbers in lines of data block */
+  /* Number of floating posize_t numbers in lines of data block */
   switch (*n_ports) {
     case 1:
       n_nums_freq_line = 3; /* 1 + 1 * 2 */
@@ -194,26 +196,11 @@ parse_touchstone(const char* filename,
 
     /* Count data lines */
     /* TODO: use strtok instead and count tokens */
-    n_read = sscanf(
-      line_buff,
-      "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-      &f,
-      &a[0],
-      &b[0],
-      &a[1],
-      &b[1],
-      &a[2],
-      &b[2],
-      &a[3],
-      &b[3],
-      &a[4],
-      &b[4],
-      &a[5],
-      &b[5],
-      &a[6],
-      &b[6],
-      &a[7],
-      &b[7]);
+    n_read = sscanf(line_buff,
+                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+                    &f,
+                    &a[0], &b[0], &a[1], &b[1], &a[2], &b[2], &a[3], &b[3],
+                    &a[4], &b[4], &a[5], &b[5], &a[6], &b[6], &a[7], &b[7]);
     if (n_read == n_nums_freq_line) {
       (*n_freq)++;
     } else if (5 == n_read) {
@@ -229,9 +216,15 @@ parse_touchstone(const char* filename,
 
   /* Parse acutal data */
   fp = fopen(filename, "r");
+  i = 0;
   while (fgets(line_buff, LINE_BUFF_LENGTH, fp)) {
     /* Ignore line and tailing comments */
     if (NULL != (comment_char = strchr(line_buff, '!'))) {
+      line_buff[comment_char - line_buff] = '\0';
+    }
+
+    /* Ignore options line */
+    if (NULL != (comment_char = strchr(line_buff, '#'))) {
       line_buff[comment_char - line_buff] = '\0';
     }
 
@@ -241,31 +234,7 @@ parse_touchstone(const char* filename,
     }
 
     /* Parse data line */
-    /* TODO: use strtok instead */
-    n_read = sscanf(
-      line_buff,
-      "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-      &f,
-      &a[0],
-      &b[0],
-      &a[1],
-      &b[1],
-      &a[2],
-      &b[2],
-      &a[3],
-      &b[3],
-      &a[4],
-      &b[4],
-      &a[5],
-      &b[5],
-      &a[6],
-      &b[6],
-      &a[7],
-      &b[7]);
-    if (5 == n_read) { /* Only noise parameters contain five entries per line */
-      break;
-    }
-    /* TODO: assemble data into arrays */
+    /* TODO */
   }
 
   fclose(fp);
