@@ -58,9 +58,7 @@ parse_options_line(char* line,
 
   /* Parse line */
   token = strtok(line, " "); /* First token is '#' */
-  while (token != NULL) {
-    token = strtok(NULL, " ");
-
+  while (NULL != (token = strtok(NULL, " "))) {
     /* Frequency unit */
     if (0 == strcmp(token, "hz")) {
       *freq_factor = 1.0;
@@ -211,8 +209,8 @@ parse_touchstone(const char* filename,
   fclose(fp);
 
   /* Allocate memory */
-  *freq = realloc(*freq, (*n_freq) * sizeof((*freq)[0]));
-  *data = realloc(*data, (*n_freq) * n_params * sizeof((*data)[0]));
+  *freq = malloc((*n_freq) * sizeof((*freq)[0]));
+  *data = malloc((*n_freq) * n_params * sizeof((*data)[0]));
 
   /* Parse acutal data */
   fp = fopen(filename, "r");
