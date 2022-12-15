@@ -114,43 +114,31 @@ unformat_complex(const double a,
   return ret;
 }
 
-/* ========================================================================== */
-/*                          Declared in header file                           */
-/* ========================================================================== */
-
-void
-parse_touchstone(const char* filename,
-                 int* n_ports,
-                 int* n_freq,
-                 double* r_ref,
-                 double** freq,
-                 cmplx** data)
+void clear_comment(char *line)
 {
-  int n_params;
+  /* Ignore line and tailing comments */
+  char* comment;
+  if (NULL != (comment = strchr(line, '!'))) {
+    line[comment - line] = '\0';
+  }
+}
+
+void parse_metadata(const char* filename,
+                    const int n_ports,
+                    int* n_freq,
+                    double* r_ref,
+                    double* freq_factor,
+                    char* type,
+                    enum complex_format* format)
+{
   FILE* fp;
-  char line_buff[LINE_BUFF_LENGTH];
-  char type;
-  char* comment_char;
-  int options_line_found = 0;
-  double freq_factor = 1.0;
-  enum complex_format format;
-  int n_read;
-  double f;    /* Frequency for sscanf */
-  double a[8]; /* 1st number of complex format for sscanf */
-  double b[8]; /* 2nd number of complex format for sscanf */
+  char line[LINE_BUFF_LENGTH];
+  char* token;
+  int n_tokens;
   int n_nums_freq_line;
-  char *token;
-  int i;
 
-  /* Counter for frequency sampling posize_ts */
-  *n_freq = 0;
-
-  /* Get number of ports */
-  *n_ports = get_n_ports(filename);
-  n_params = (*n_ports) * (*n_ports);
-
-  /* Number of floating posize_t numbers in lines of data block */
-  switch (*n_ports) {
+  /* Number of floating point numbers in lines of data block */
+  switch (n_ports) {
     case 1:
       n_nums_freq_line = 3; /* 1 + 1 * 2 */
       break;
@@ -174,66 +162,107 @@ parse_touchstone(const char* filename,
   }
 
   /* Parse metainformation and count number of frequency sampling points */
-  while (fgets(line_buff, LINE_BUFF_LENGTH, fp)) {
-    /* Ignore line and tailing comments */
-    if (NULL != (comment_char = strchr(line_buff, '!'))) {
-      line_buff[comment_char - line_buff] = '\0';
-    }
-
-    /* Ignore empty lines */
-    if (0 == strlen(line_buff)) {
+  *n_freq = 0;
+  while (fgets(line, LINE_BUFF_LENGTH, fp)) {
+    /* Clear comments and ignore empty lines */
+    clear_comment(line);
+    if (0 == strlen(line)) {
       continue;
     }
 
     /* Options line */
-    if ('#' == line_buff[0] && !options_line_found) {
-      parse_options_line(line_buff, r_ref, &freq_factor, &type, &format);
-      options_line_found = 1;
+    if ('#' == line[0]) {
+      parse_options_line(line, r_ref, freq_factor, type, format);
       continue;
     }
 
-    /* Count data lines */
-    /* TODO: use strtok instead and count tokens */
-    n_read = sscanf(line_buff,
-                    "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                    &f,
-                    &a[0], &b[0], &a[1], &b[1], &a[2], &b[2], &a[3], &b[3],
-                    &a[4], &b[4], &a[5], &b[5], &a[6], &b[6], &a[7], &b[7]);
-    if (n_read == n_nums_freq_line) {
-      (*n_freq)++;
-    } else if (5 == n_read) {
-      /* Only noise parameters contain five entries per line */
+    /* Data line */
+    n_tokens = 0;
+    if (NULL != (token = strtok(line, " "))) {
+      n_tokens++;
+    }
+    while (NULL != (token = strtok(NULL, " "))) {
+      n_tokens++;
+    }
+    if (5 == n_tokens) {
+      /* Noise parameters */
       break;
+    }
+    if (n_tokens == n_nums_freq_line) {
+      (*n_freq)++;
     }
   }
   fclose(fp);
+}
 
-  /* Allocate memory */
-  *freq = malloc((*n_freq) * sizeof((*freq)[0]));
-  *data = malloc((*n_freq) * n_params * sizeof((*data)[0]));
+/* ========================================================================== */
+/*                          Declared in header file                           */
+/* ========================================================================== */
+
+void
+parse_touchstone(const char* filename,
+                 int* n_ports,
+                 int* n_freq,
+                 double* r_ref,
+                 double** freq,
+                 cmplx** data)
+{
+  FILE* fp;
+  char line[LINE_BUFF_LENGTH];
+  char type;
+  double freq_factor;
+  enum complex_format format;
+  int n_params;
+  char *token;
+  double *raw;
+  int i, ii, iii, iiii;
+
+  /* Counter for frequency sampling posize_ts */
+  *n_freq = 0;
+
+  /* Get number of ports */
+  *n_ports = get_n_ports(filename);
+  n_params = (*n_ports) * (*n_ports);
+
+  /* First reading of file for metadata and number of sampling points */
+  parse_metadata(filename, *n_ports, n_freq, r_ref, &freq_factor, &type, &format);
 
   /* Parse acutal data */
   fp = fopen(filename, "r");
-  i = 0;
-  while (fgets(line_buff, LINE_BUFF_LENGTH, fp)) {
-    /* Ignore line and tailing comments */
-    if (NULL != (comment_char = strchr(line_buff, '!'))) {
-      line_buff[comment_char - line_buff] = '\0';
+  raw = malloc((*n_freq) * (1 + 2 * n_params) * sizeof(raw[0]));
+  while (fgets(line, LINE_BUFF_LENGTH, fp)) {
+    /* Skip everything except data lines */
+    clear_comment(line);
+    if ('#' == line[0]) {
+      continue;
     }
-
-    /* Ignore options line */
-    if (NULL != (comment_char = strchr(line_buff, '#'))) {
-      line_buff[comment_char - line_buff] = '\0';
-    }
-
-    /* Ignore empty lines */
-    if (0 == strlen(line_buff)) {
+    if (0 == strlen(line)) {
       continue;
     }
 
-    /* Parse data line */
-    /* TODO */
+    /* Tokenize and store data stream */
+    token = strtok(line, " ");
+    raw[i++] = atof(token);
+    while (NULL != (token = strtok(NULL, " "))) {
+      raw[i++] = atof(token);
+    }
   }
-
   fclose(fp);
+
+  /* Assembe read raw data into target arrays */
+  *freq = malloc((*n_freq) * sizeof((*freq)[0]));
+  *data = malloc((*n_freq) * n_params * sizeof((*data)[0]));
+  for (i = 0; i < *n_freq; ++i) {
+    ii = i * (1 + n_params);
+    (*freq)[i] = raw[ii];
+    for (iii = 0; iii < n_params; ++iii) {
+      iiii = ii + 1 + 2 * iii;
+      (*data)[i * n_params] = unformat_complex(raw[iiii], raw[iiii + 1], format);
+    }
+  }
+  free(raw);
+
+  if (3 <= *n_ports) {
+    /* TODO: convert to column major storage */
+  }
 }
