@@ -8,10 +8,7 @@ add_library(${PROJECT_NAME} SHARED
     sparams.c
     )
 
-set(BLA_VENDOR OpenBLAS)
-find_package(BLAS REQUIRED)
-    
-target_link_libraries(${PROJECT_NAME} PRIVATE -lm BLAS::BLAS)
+target_link_libraries(${PROJECT_NAME} PRIVATE -lm)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
