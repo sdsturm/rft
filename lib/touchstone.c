@@ -195,6 +195,21 @@ void parse_metadata(const char* filename,
   fclose(fp);
 }
 
+void rowmaj2colmaj(cmplx *matrix_data, const int rows, const int cols)
+{
+  int m, n;
+  int i_cm, i_rm;
+  for (m = 0; m < rows; ++m) {
+    for (n = 0; n < cols; ++n) {
+      i_cm = m + n * rows;
+      i_rm = n + m * cols;
+      if (i_cm != i_rm) {
+        matrix_data[i_cm] = matrix_data[i_rm];
+      }
+    }
+  }
+}
+
 /* ========================================================================== */
 /*                          Declared in header file                           */
 /* ========================================================================== */
@@ -262,7 +277,11 @@ parse_touchstone(const char* filename,
   }
   free(raw);
 
+  /* Only s2p is column major from Touchstone parsing */
+  /* For three and more ports we have row major from Touchstone parsing */
   if (3 <= *n_ports) {
-    /* TODO: convert to column major storage */
+    for (i = 0; i < *n_freq; ++i) {
+      rowmaj2colmaj(&(*data)[i * n_params], *n_ports, *n_ports);
+    }
   }
 }

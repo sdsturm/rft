@@ -26,12 +26,12 @@ void nwparams_init_from_tochstone(nwparams *p, const char* filename)
     /* TODO */
 }
 
-cmplx nwparams_get_p_fmn(nwparams *p, const int f, const int m, const int n)
+cmplx nwparams_get_p_fmn(const nwparams *p, const int f, const int m, const int n)
 {
     return p->data[nwparams_get_index(p, f, m, n)];
 }
 
-void nwparams_get_p_mn(nwparams *p, cmplx* p_mn, const int m, const int n)
+void nwparams_get_p_mn(const nwparams *p, cmplx* p_mn, const int m, const int n)
 {
     int f;
     p_mn = realloc(p_mn, p->n_freq * sizeof(p_mn[0]));

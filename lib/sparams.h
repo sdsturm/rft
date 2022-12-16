@@ -25,6 +25,8 @@ void sparams_init_empty(sparams *s, const int n_ports, const int n_freq);
 
 void sparams_init_from_touchstone(sparams *s, const char* filename);
 
+void sparams_print_touchstone(FILE* stream, const sparams *p, const char* format);
+
 void sparams_se2mm(const sparams *s_se, sparams_mm *s_mm);
 
 void sparams_mm2se(const sparams_mm *s_mm, sparams *s_se);
