@@ -14,6 +14,5 @@ crop_print_help()
 void
 crop_callback(int argc, const char* argv[])
 {
-
   /* TODO */
 }

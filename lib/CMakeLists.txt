@@ -1,4 +1,4 @@
-project(rft C CXX)
+project(rft C)
 
 add_library(${PROJECT_NAME} SHARED
     cmplx.c
@@ -7,6 +7,9 @@ add_library(${PROJECT_NAME} SHARED
     nwparams.c
     sparams.c
     )
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 90)
+set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD_REQUIRED ON)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE -lm)
 
