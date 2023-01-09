@@ -86,7 +86,7 @@ cmplx cmplx_div (const cmplx z1, const cmplx z2)
     ans.b = z1.b - z1.a * common;
   } else {
     common = z2.a / z2.b;
-    den = z1.a * (z1.a / z2.b) + z2.b;
+    den = z2.a * common + z2.b;
     ans.a = z1.a * common + z1.b;
     ans.b = z1.b * common - z1.a;
   }
