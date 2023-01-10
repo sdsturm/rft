@@ -86,6 +86,10 @@ BOOST_AUTO_TEST_CASE(exp)
 
 BOOST_AUTO_TEST_CASE(sqrt)
 {
+  cmplx arg, ans;
+  arg = cmplx_real_imag(0.0, 1.0);
+  ans = cmplx_sqrt(arg);
+
   /* TODO*/
   BOOST_CHECK(false);
 }
