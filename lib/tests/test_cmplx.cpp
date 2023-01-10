@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(log)
   arg.a = 0.0;
   arg.b = 1.0;
   ans = cmplx_log(arg);
-  BOOST_CHECK_CLOSE(cmplx_real(ans), M_PI / 2.0, 1e-20);
-  BOOST_CHECK_LT(cmplx_imag(ans), 1e-15);
+  BOOST_CHECK_LT(cmplx_real(ans), 1e-15);
+  BOOST_CHECK_CLOSE(cmplx_imag(ans), M_PI / 2.0, 1e-20);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
