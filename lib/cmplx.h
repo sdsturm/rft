@@ -37,6 +37,8 @@ cmplx cmplx_sqrt (const cmplx z);
 
 cmplx cmplx_exp (const cmplx z);
 
+cmplx cmplx_log (const cmplx z);
+
 #ifdef __cplusplus
 }
 #endif

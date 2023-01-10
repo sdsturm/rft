@@ -44,6 +44,7 @@ cmplx_imag(const cmplx z)
 double
 cmplx_abs(const cmplx z)
 {
+  /* See (5.5.4) in "Numerical Recipes", 3rd edition, 2007 */
   double tmp;
   double ans;
   if (fabs(z.a) >= fabs(z.b)) {
@@ -84,6 +85,7 @@ cmplx_sub(const cmplx z1, const cmplx z2)
 cmplx
 cmplx_mul(const cmplx z1, const cmplx z2)
 {
+  /* See (5.5.2) in "Numerical Recipes", 3rd edition, 2007 */
   cmplx ans;
   double ac = z1.a * z2.a;
   double bd = z1.b * z2.b;
@@ -95,6 +97,7 @@ cmplx_mul(const cmplx z1, const cmplx z2)
 cmplx
 cmplx_div(const cmplx z1, const cmplx z2)
 {
+  /* See (5.5.5) in "Numerical Recipes", 3rd edition, 2007 */
   cmplx ans;
   double den, common;
   if (fabs(z2.a) >= fabs(z2.b)) {
@@ -116,6 +119,7 @@ cmplx_div(const cmplx z1, const cmplx z2)
 cmplx
 cmplx_sqrt(const cmplx z)
 {
+  /* See (5.5.6) and (5.5.7) in "Numerical Recipes", 3rd edition, 2007 */
   double w;
   double tmp;
   cmplx ans;
@@ -150,9 +154,19 @@ cmplx_sqrt(const cmplx z)
 cmplx
 cmplx_exp(const cmplx z)
 {
+  /* See (4.45.16) in "NIST Handbook of Mathematical Functions", 2010*/
   cmplx ans;
   double factor = exp(z.a);
   ans.a = factor * cos(z.b);
   ans.b = factor * sin(z.b);
+  return ans;
+}
+
+cmplx cmplx_log (const cmplx z)
+{
+  /* See (4.45.15) in "NIST Handbook of Mathematical Functions", 2010*/
+  cmplx ans;
+  ans.a = log(cmplx_abs(z));
+  ans.b = cmplx_arg(z);
   return ans;
 }
