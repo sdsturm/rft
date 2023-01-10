@@ -11,11 +11,15 @@ typedef struct
   double b;
 } cmplx;
 
-cmplx cmplx_real_imag(const double real, const double imag);
+cmplx cmplx_set_re_im(const double real, const double imag);
 
-cmplx cmplx_abs_ang(const double mag, const double arg);
+cmplx cmplx_set_abs_ang(const double mag, const double arg);
 
 cmplx cmplx_imag_unit();
+
+double cmplx_real(const cmplx z);
+
+double cmplx_imag(const cmplx z);
 
 double cmplx_abs (const cmplx z);
 

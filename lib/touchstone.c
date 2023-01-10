@@ -23,7 +23,7 @@ get_n_ports(const char* filename)
 
   ext = strstr(filename, ".s");
   strncpy(n_ports_str, ext + 2, strlen(ext) - 3);
-  n_ports = (int) atol(n_ports_str);
+  n_ports = (int)atol(n_ports_str);
 
   return n_ports;
 }
@@ -52,7 +52,7 @@ parse_options_line(char* line,
   *r_ref = 50.0;        /* Ohm */
 
   /* Convert line to lowercase */
-  for (i = 0; i < (int) strlen(line); ++i) {
+  for (i = 0; i < (int)strlen(line); ++i) {
     line[i] = (char)tolower(line[i]);
   }
 
@@ -102,19 +102,20 @@ unformat_complex(const double a,
   cmplx ret;
   switch (format) {
     case DB:
-      ret = cmplx_abs_ang(pow(10.0, a / 20.0), deg2rad(b));
+      ret = cmplx_set_abs_ang(pow(10.0, a / 20.0), deg2rad(b));
       break;
     case MA:
-      ret = cmplx_abs_ang(a, deg2rad(b));
+      ret = cmplx_set_abs_ang(a, deg2rad(b));
       break;
     case RI:
-      ret = cmplx_real_imag(a, b);
+      ret = cmplx_set_re_im(a, b);
       break;
   }
   return ret;
 }
 
-void clear_comment(char *line)
+void
+clear_comment(char* line)
 {
   /* Ignore line and tailing comments */
   char* comment;
@@ -123,13 +124,14 @@ void clear_comment(char *line)
   }
 }
 
-void parse_metadata(const char* filename,
-                    const int n_ports,
-                    int* n_freq,
-                    double* r_ref,
-                    double* freq_factor,
-                    char* type,
-                    enum complex_format* format)
+void
+parse_metadata(const char* filename,
+               const int n_ports,
+               int* n_freq,
+               double* r_ref,
+               double* freq_factor,
+               char* type,
+               enum complex_format* format)
 {
   FILE* fp;
   char line[LINE_BUFF_LENGTH];
@@ -195,7 +197,8 @@ void parse_metadata(const char* filename,
   fclose(fp);
 }
 
-void rowmaj2colmaj(cmplx *matrix_data, const int rows, const int cols)
+void
+rowmaj2colmaj(cmplx* matrix_data, const int rows, const int cols)
 {
   int m, n;
   int i_cm, i_rm;
@@ -228,8 +231,8 @@ parse_touchstone(const char* filename,
   double freq_factor;
   enum complex_format format;
   int n_params;
-  char *token;
-  double *raw;
+  char* token;
+  double* raw;
   int i, ii, iii, iiii;
 
   /* Counter for frequency sampling posize_ts */
@@ -240,7 +243,8 @@ parse_touchstone(const char* filename,
   n_params = (*n_ports) * (*n_ports);
 
   /* First reading of file for metadata and number of sampling points */
-  parse_metadata(filename, *n_ports, n_freq, r_ref, &freq_factor, &type, &format);
+  parse_metadata(
+    filename, *n_ports, n_freq, r_ref, &freq_factor, &type, &format);
 
   /* Parse acutal data */
   fp = fopen(filename, "r");
@@ -272,7 +276,8 @@ parse_touchstone(const char* filename,
     (*freq)[i] = raw[ii];
     for (iii = 0; iii < n_params; ++iii) {
       iiii = ii + 1 + 2 * iii;
-      (*data)[i * n_params] = unformat_complex(raw[iiii], raw[iiii + 1], format);
+      (*data)[i * n_params] =
+        unformat_complex(raw[iiii], raw[iiii + 1], format);
     }
   }
   free(raw);

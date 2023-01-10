@@ -3,7 +3,7 @@
 #include <math.h>
 
 cmplx
-cmplx_real_imag(const double real, const double imag)
+cmplx_set_re_im(const double real, const double imag)
 {
   cmplx ans;
   ans.a = real;
@@ -12,7 +12,7 @@ cmplx_real_imag(const double real, const double imag)
 }
 
 cmplx
-cmplx_abs_ang(const double mag, const double arg)
+cmplx_set_abs_ang(const double mag, const double arg)
 {
   cmplx ans;
   ans.a = mag * cos(arg);
@@ -29,7 +29,20 @@ cmplx_imag_unit()
   return ans;
 }
 
-double cmplx_abs (const cmplx z)
+double
+cmplx_real(const cmplx z)
+{
+  return z.a;
+}
+
+double
+cmplx_imag(const cmplx z)
+{
+  return z.b;
+}
+
+double
+cmplx_abs(const cmplx z)
 {
   double tmp;
   double ans;
@@ -44,12 +57,14 @@ double cmplx_abs (const cmplx z)
   return ans;
 }
 
-double cmplx_arg (const cmplx z)
+double
+cmplx_arg(const cmplx z)
 {
   return atan2(z.b, z.a);
 }
 
-cmplx cmplx_add (const cmplx z1, const cmplx z2)
+cmplx
+cmplx_add(const cmplx z1, const cmplx z2)
 {
   cmplx ans;
   ans.a = z1.a + z2.a;
@@ -57,7 +72,8 @@ cmplx cmplx_add (const cmplx z1, const cmplx z2)
   return ans;
 }
 
-cmplx cmplx_sub (const cmplx z1, const cmplx z2)
+cmplx
+cmplx_sub(const cmplx z1, const cmplx z2)
 {
   cmplx ans;
   ans.a = z1.a - z2.a;
@@ -65,17 +81,19 @@ cmplx cmplx_sub (const cmplx z1, const cmplx z2)
   return ans;
 }
 
-cmplx cmplx_mul (const cmplx z1, const cmplx z2)
+cmplx
+cmplx_mul(const cmplx z1, const cmplx z2)
 {
   cmplx ans;
   double ac = z1.a * z2.a;
   double bd = z1.b * z2.b;
-  ans.a = ac -bd;
+  ans.a = ac - bd;
   ans.b = (z1.a + z1.b) * (z2.a + z2.b) - ac - bd;
   return ans;
 }
 
-cmplx cmplx_div (const cmplx z1, const cmplx z2)
+cmplx
+cmplx_div(const cmplx z1, const cmplx z2)
 {
   cmplx ans;
   double den, common;
@@ -95,13 +113,14 @@ cmplx cmplx_div (const cmplx z1, const cmplx z2)
   return ans;
 }
 
-cmplx cmplx_sqrt (const cmplx z)
+cmplx
+cmplx_sqrt(const cmplx z)
 {
   double w;
   double tmp;
   cmplx ans;
 
-  if ((0.0 == z.a) && (z.a == z.b)) {
+  if ((0.0 == z.a) && (0.0 == z.b)) {
     w = 0.0;
   } else if (fabs(z.a) >= fabs(z.b)) {
     tmp = z.b / z.a;
@@ -116,7 +135,7 @@ cmplx cmplx_sqrt (const cmplx z)
     ans.b = 0.0;
   } else if (z.a >= 0.0) {
     ans.a = w;
-    ans.b = fabs(z.b) / (2.0 * w);
+    ans.b = z.b / (2.0 * w);
   } else if ((z.a < 0.0) && (z.b >= 0.0)) {
     ans.a = fabs(z.b) / (2.0 * w);
     ans.b = w;
@@ -128,7 +147,8 @@ cmplx cmplx_sqrt (const cmplx z)
   return ans;
 }
 
-cmplx cmplx_exp (const cmplx z)
+cmplx
+cmplx_exp(const cmplx z)
 {
   cmplx ans;
   double factor = exp(z.a);
